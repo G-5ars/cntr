@@ -27,6 +27,7 @@ void help() {
   puts("\tcntr +N   increments the counter by N");
   puts("\tcntr -    decrements the counter by 1");
   puts("\tcntr -N   decrements the counter by N");
+  puts("\tcntr =    sets the counter to 0");
   puts("\tcntr =N   sets the counter to N");
   exit(2);
 }
