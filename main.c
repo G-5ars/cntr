@@ -28,7 +28,6 @@ void help() {
   puts("\tcntr -    decrements the counter by 1");
   puts("\tcntr -N   decrements the counter by N");
   puts("\tcntr =N   sets the counter to N");
-  puts("\tcntr -h   prints this help text");
   exit(2);
 }
 
@@ -36,9 +35,6 @@ int get_new_value(int argc, char *argv[], int current) {
   if (argc == 1)
     return current;
   else if (argc > 2)
-    help();
-
-  if (strcmp(argv[1], "-h") == 0)
     help();
 
   int delta = 0;
