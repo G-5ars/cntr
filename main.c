@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <stdbool.h>
 
 #define CNTR_FILE ".cntr"
 #define VERSION "0.0.1"
@@ -18,17 +19,23 @@ void save(int value, FILE *fp) {
 }
 
 void help() {
-  puts("A simple CouNTeR " VERSION);
+  puts("A simple CouNTeR v" VERSION);
   puts("Stores a number (int) in a .cntr file in the current directory and "
        "allows you to increment and decrement it using simple commands");
-  puts("Usage:");
-  puts("\tcntr      shows the current value");
-  puts("\tcntr +    increments the counter by 1");
-  puts("\tcntr +N   increments the counter by N");
-  puts("\tcntr -    decrements the counter by 1");
-  puts("\tcntr -N   decrements the counter by N");
-  puts("\tcntr =    sets the counter to 0");
-  puts("\tcntr =N   sets the counter to N");
+  puts("Exit codes: [0] if the cntr is positive, [1] if it'z 0 or negative");
+  puts("Usage: cntr [FLAG] [ACTION]\n");
+  puts("FLAGS:");
+  puts("\t-r   print just the raw number");
+  puts("\t          (for scripts)");
+  puts("\t-q   do not print anything\n");
+  puts("ACTIONS:");
+  puts("\tnone shows the current value");
+  puts("\t+    increments the counter by 1");
+  puts("\t+N   increments the counter by N");
+  puts("\t-    decrements the counter by 1");
+  puts("\t-N   decrements the counter by N");
+  puts("\t=    sets the counter to 0");
+  puts("\t=N   sets the counter to N");
   exit(2);
 }
 
@@ -77,15 +84,34 @@ int main(int argc, char *argv[]) {
     rewind(fp);
   }
 
+  bool quiet = false;
+  bool raw = false;
+
+  if (argc > 1 && strcmp(argv[1], "-q") == 0) {
+    quiet = true;
+    argc--;
+    argv++;
+  }
+  if (argc > 1 && strcmp(argv[1], "-r") == 0) {
+    raw = true;
+    quiet = true;
+    argc--;
+    argv++;
+  }
+
   int value = load(fp);
   int new_value = get_new_value(argc, argv, value);
 
-  printf("\t>> %d <<\n", value);
+  if (!quiet) printf("\t>> %d <<\n", value);
+
 
   if (new_value != value) {
-    printf("\t== %d ==\n", new_value);
+    if (!quiet) printf("\t== %d ==\n", new_value);
     save(new_value, fp);
   }
+
+  if (raw) printf("%d", new_value);
+  
   fclose(fp);
-  return 0;
+  return (int)(new_value <= 0);
 }
